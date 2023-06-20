@@ -1,5 +1,5 @@
 from torch.utils.data import Dataset
-from torch import is_tensor
+from torch import is_tensor, Tensor
 from PIL import Image
 from pandas import concat, read_csv
 import os
@@ -46,7 +46,11 @@ class RealCartoon(Dataset):
 
         img_name = os.path.join(self.root_dir, self.dataset.iloc[idx, 0])
         image = Image.open(img_name)
-        label = self.dataset.iloc[idx, -1]
+        if image.mode == "L":
+            img_name = os.path.join(self.root_dir, self.dataset.iloc[1, 0])
+            image = Image.open(img_name)
+
+        label = Tensor([self.dataset.iloc[idx, -1]])
 
         if self.transforms:
             image = self.transforms(image)
